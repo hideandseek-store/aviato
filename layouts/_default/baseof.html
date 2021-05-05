@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="{{ with site.LanguageCode }}{{ . }}{{ else }}en-US{{ end }}">
+
+<body>
+	{{- partial "header.htm" . -}}
+	{{- partial "blocks/navigation.htm" . -}}
+	{{- partial "blocks/hero-slider.htm" . -}}
+	{{- partial "blocks/category.htm" . -}}
+
+	{{- block "main" . }}{{- end }}
+
+	{{- partial "blocks/call-to-action.htm" . -}}
+	{{- partial "blocks/instagram-feed.htm" . -}}
+	{{- partial "blocks/footer.htm" . -}}
+	{{- partial "footer.htm" . -}}
+</body>
+
+</html>

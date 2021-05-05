@@ -11,17 +11,17 @@ var rimraf       = require('rimraf');
 
 var path = {
   src: {
-    html    : 'source/*.html',
-    others  : 'source/*.+(php|ico|png)',
-    htminc  : 'source/partials/**/*.htm',
-    incdir  : 'source/partials/',
-    plugins : 'source/plugins/**/*.*',
-    js      : 'source/js/*.js',
-    scss    : 'source/scss/**/*.scss',
-    images  : 'source/images/**/*.+(png|jpg|gif|svg)'
+    html    : 'layouts/*.html',
+    others  : 'layouts/*.+(php|ico|png)',
+    htminc  : 'layouts/partials/**/*.htm',
+    incdir  : 'layouts/partials/',
+    plugins : 'static/plugins/**/*.*',
+    js      : 'assets/js/*.js',
+    scss    : 'assets/scss/**/*.scss',
+    images  : 'images/**/*.+(png|jpg|gif|svg)'
   },
   build: {
-    dirDev : 'theme/'
+    dirDev : '../../public/'
   }
 };
 
@@ -83,18 +83,29 @@ return gulp.src(path.src.others)
   .pipe(gulp.dest(path.build.dirDev))
 });
 
+// HUGO
+gulp.task('hugo:build', function (cb) {
+  return exec('( cd .. ; cd .. ; hugo --verbose )', function (err, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+    cb(err)
+  });
+});
+
 // Clean Build Folder
 gulp.task('clean', function (cb) {
-  rimraf('./theme', cb);
+  rimraf('./' + path.build.dirDev, cb);
 });
 
 // Watch Task
+var exec = require('child_process').exec;
+
 gulp.task('watch:build', function () {
-  gulp.watch(path.src.html, ['html:build']);
-  gulp.watch(path.src.htminc, ['html:build']);
+  gulp.watch(path.src.html, ['html:build', 'hugo:build']);
+  gulp.watch(path.src.htminc, ['html:build', 'hugo:build']);
   gulp.watch(path.src.scss, ['scss:build']);
   gulp.watch(path.src.js, ['js:build']);
-  gulp.watch(path.src.images, ['images:build']);
+  gulp.watch(path.src.images, ['images:build', 'hugo:build']);
   gulp.watch(path.src.plugins, ['plugins:build']);
 });
 
@@ -108,6 +119,7 @@ gulp.task('build', function () {
     'images:build',
     'plugins:build',
     'others:build',
+    'hugo:build',
     'watch:build',
     function () {
       bs.init({
